@@ -47,7 +47,7 @@ class ScoreTracker:
     def display_score(self):
         cowsay.kitty(f"Wins: {self.wins}, Losses: {self.losses}")
 
-# Main game logic in a function for replay functionality
+#Main game logic
 def play_game():
     secret_word = random.choice(WORDS)
     guessed_letters = set()
@@ -81,21 +81,21 @@ def play_game():
         cowsay.ghostbusters(f"Game over! The word was: {secret_word}")
         tracker.update_score(False)
 
-# 4. File I/O - Saving and loading scores
+#Saving and loading scores
     with open("game_results.txt", "a") as file:
         if attempts > 0:
             file.write(f"Won: {secret_word}\n")
         else:
             file.write(f"Lost: {secret_word}\n")
 
-# Initialize Score Tracker
+#Initialize Score Tracker
 tracker = ScoreTracker()
 
-# Initial Game
+#Initial Game
 play_game()
 tracker.display_score()
 
-# Replay functionality
+#Replay
 while True:
     replay = input("\nDo you want to play again? (yes/no): ").lower()
     if replay == "yes":
