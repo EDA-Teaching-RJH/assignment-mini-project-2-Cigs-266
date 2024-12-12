@@ -1,0 +1,114 @@
+import re
+import random
+import cowsay
+
+#This game combines various programming principles into a fun guessing challenge.
+#(There is a problem with my Error Handling I cant fix, more details at the bottom)
+
+#Validating word input
+#Function to check that the word only contains letters.
+def validate_word(word):
+    """Checks if a word contains only alphabetic characters.""" 
+    return re.fullmatch(r'[a-zA-Z]+', word) is not None
+
+#Testing
+#Function to check if the guessed letter is in the word
+def check_guess(word, guessed_letters):
+    """Returns the current state of the word with guessed letters revealed."""
+    return ''.join([letter if letter in guessed_letters else '_' for letter in word])
+
+#Random word selection
+# List of words for the game
+WORDS = ["python", "cowsay", "university", "christmas", "kent", "overwatch", "marvel", "bannana", "skateboarding", "anime" "pneumonoultramicroscopicsilicovolcanoconiosis"]
+#I dont think people will get that last one LOL
+
+#Picks word from list
+secret_word = random.choice(WORDS)
+guessed_letters = set()
+attempts = 6
+
+#Game Instructions
+cowsay.tux("Hello!!! This is a word guessing game!!!")
+print("Try to guess the secret word, one letter at a time!")
+print("You have 6 attempts. Good luck >:3  !")
+# Score Tracker
+class ScoreTracker:
+    """Tracks and displays game results."""
+    def __init__(self):
+        self.wins = 0
+        self.losses = 0
+
+    def update_score(self, won):
+        if won:
+            self.wins += 1
+        else:
+            self.losses += 1
+
+    def display_score(self):
+        cowsay.kitty(f"Wins: {self.wins}, Losses: {self.losses}")
+
+# Main game logic in a function for replay functionality
+def play_game():
+    secret_word = random.choice(WORDS)
+    guessed_letters = set()
+    attempts = 6
+
+    while attempts > 0:
+        print("\n" + check_guess(secret_word, guessed_letters))
+        guess = input("Guess a letter: ").lower()
+
+        if not validate_word(guess) or len(guess) != 1:
+            cowsay.daemon("Please enter a single valid letter.")
+            continue
+
+        if guess in guessed_letters:
+            cowsay.meow("You already guessed that letter!")
+            continue
+
+        guessed_letters.add(guess)
+
+        if guess in secret_word:
+            cowsay.cow("Good job! You guessed a letter.")
+            if set(secret_word).issubset(guessed_letters):
+                cowsay.cheese(f"Congratulations! You guessed the word: {secret_word}")
+                tracker.update_score(True)
+                return
+        else:
+            attempts -= 1
+            cowsay.dragon(f"Wrong guess! You have {attempts} attempts left.")
+            print("HINT: If you havent already tried... Try guessing a vowel!!")
+    else:
+        cowsay.ghostbusters(f"Game over! The word was: {secret_word}")
+        tracker.update_score(False)
+
+# 4. File I/O - Saving and loading scores
+    with open("game_results.txt", "a") as file:
+        if attempts > 0:
+            file.write(f"Won: {secret_word}\n")
+        else:
+            file.write(f"Lost: {secret_word}\n")
+
+# Initialize Score Tracker
+tracker = ScoreTracker()
+
+# Initial Game
+play_game()
+tracker.display_score()
+
+# Replay functionality
+while True:
+    replay = input("\nDo you want to play again? (yes/no): ").lower()
+    if replay == "yes":
+        cowsay.turtle("\nNew Game!")
+        play_game()
+        tracker.display_score()
+    elif replay == "no":
+        cowsay.beavis("Goodbye! Thanks for playing!")
+        break
+    else:
+        cowsay.daemon("Invalid input. Please type 'yes' or 'no'.")
+
+#HELP!!!! If you input "no" when it asks you if you would like to play again, the code prints the goodbye response, // 1/3
+#however if after that response you then type "yes" without restarting the code by pressing the play button again, you get an endless stream of // 2/3
+#you get an endless stream of the letter "y" until you restart the code by running it again. // 3/3
+#how do you fix this?
